@@ -1,0 +1,178 @@
+From: <Saved by Blink>
+Snapshot-Content-Location: https://d2z0o16i8xm8ak.cloudfront.net/web/direct-files/de2570b3358835858032c526a0cd9c37/a515cd30-aed0-4dab-884c-83755a01f204/0eb54730.html?response-content-disposition=attachment%3B+filename%3D%22index.html%22%3B+filename%2A%3DUTF-8%27%27index.html&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9kMnowbzE2aTh4bThhay5jbG91ZGZyb250Lm5ldC93ZWIvZGlyZWN0LWZpbGVzL2RlMjU3MGIzMzU4ODM1ODU4MDMyYzUyNmEwY2Q5YzM3L2E1MTVjZDMwLWFlZDAtNGRhYi04ODRjLTgzNzU1YTAxZjIwNC8wZWI1NDczMC5odG1sP3Jlc3BvbnNlLWNvbnRlbnQtZGlzcG9zaXRpb249YXR0YWNobWVudCUzQitmaWxlbmFtZSUzRCUyMmluZGV4Lmh0bWwlMjIlM0IrZmlsZW5hbWUlMkElM0RVVEYtOCUyNyUyN2luZGV4Lmh0bWwqIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzgxMjkzOTQ0fX19XX0_&Signature=W8Xnmazxfgs6SfUsjj8oGZLh3b9Sw6dZhZiMwHhQiW-Jye3-n2i0dOI7HiB-o1rsCIyREp0PyuenhxfIjNrd9A0B4NVTRsASYOKkqX2omVOMRjoywfG4mvOVMATwyrI198Ka6VmVbmwtDq8bK2kuHwxAWABjFAhSv5HtHtZyJURh~7wnLdBNd6YDTjO9TLa3t4sA3pCEN~XasEV3jXd0Rn~e9WbvkadDd0JVPqH23hq8wMphC8zfmEs5KwZ41RMzTif92nqArcPfWmOhNBHL8tOP2f9byG4M-upjb5MJRiiKSVucEGKtu2BI5rakXSGgV7fGSYFvrOqcaBg9E~VbxQ__&Key-Pair-Id=K1BF7XGXAIMYNX&rnd=1780689425725&utm_source=perplexity
+Subject: Connect-4 Engine Analysis
+Date: Sat, 6 Jun 2026 01:27:11 +0530
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	type="text/html";
+	boundary="----MultipartBoundary--mSEwIng3CqUGjuSd2ONBYWBhEKWfZy3hTEZnx2CRUp----"
+
+
+------MultipartBoundary--mSEwIng3CqUGjuSd2ONBYWBhEKWfZy3hTEZnx2CRUp----
+Content-Type: text/html
+Content-ID: <frame-4B72AE0F92B4A9515EB1D83F16E1C482@mhtml.blink>
+Content-Transfer-Encoding: binary
+Content-Location: https://d2z0o16i8xm8ak.cloudfront.net/web/direct-files/de2570b3358835858032c526a0cd9c37/a515cd30-aed0-4dab-884c-83755a01f204/0eb54730.html?response-content-disposition=attachment%3B+filename%3D%22index.html%22%3B+filename%2A%3DUTF-8%27%27index.html&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9kMnowbzE2aTh4bThhay5jbG91ZGZyb250Lm5ldC93ZWIvZGlyZWN0LWZpbGVzL2RlMjU3MGIzMzU4ODM1ODU4MDMyYzUyNmEwY2Q5YzM3L2E1MTVjZDMwLWFlZDAtNGRhYi04ODRjLTgzNzU1YTAxZjIwNC8wZWI1NDczMC5odG1sP3Jlc3BvbnNlLWNvbnRlbnQtZGlzcG9zaXRpb249YXR0YWNobWVudCUzQitmaWxlbmFtZSUzRCUyMmluZGV4Lmh0bWwlMjIlM0IrZmlsZW5hbWUlMkElM0RVVEYtOCUyNyUyN2luZGV4Lmh0bWwqIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzgxMjkzOTQ0fX19XX0_&Signature=W8Xnmazxfgs6SfUsjj8oGZLh3b9Sw6dZhZiMwHhQiW-Jye3-n2i0dOI7HiB-o1rsCIyREp0PyuenhxfIjNrd9A0B4NVTRsASYOKkqX2omVOMRjoywfG4mvOVMATwyrI198Ka6VmVbmwtDq8bK2kuHwxAWABjFAhSv5HtHtZyJURh~7wnLdBNd6YDTjO9TLa3t4sA3pCEN~XasEV3jXd0Rn~e9WbvkadDd0JVPqH23hq8wMphC8zfmEs5KwZ41RMzTif92nqArcPfWmOhNBHL8tOP2f9byG4M-upjb5MJRiiKSVucEGKtu2BI5rakXSGgV7fGSYFvrOqcaBg9E~VbxQ__&Key-Pair-Id=K1BF7XGXAIMYNX&rnd=1780689425725&utm_source=perplexity
+
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><link rel="stylesheet" type="text/css" href="cid:css-60a02f33-f2ab-4018-87f1-3a4c4de6cae3@mhtml.blink" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connect-4 Engine Analysis</title>
+  <link rel="preconnect" href="https://api.fontshare.com/">
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&amp;f[]=clash-display@600&amp;display=swap" rel="stylesheet">
+  
+</head>
+<body>
+  <div class="app">
+    <aside class="panel left">
+      <h1 class="title">Connect-4 Analysis</h1>
+      <p class="sub">WebAssembly frontend for your C++ engine. Play moves on the board, then call the engine for best move, score, and PV.</p>
+      <div class="toolbar">
+        <button class="btn" id="newGameBtn">New game</button>
+        <button class="btn alt" id="undoBtn">Undo</button>
+        <button class="btn alt" id="loadEngineBtn">Check engine</button>
+        <button class="btn" id="analyzeBtn">Analyze</button>
+      </div>
+      <div class="controls">
+        <div>
+          <label for="depthInput">Search depth</label>
+          <input id="depthInput" class="input" type="number" min="1" max="20" value="12">
+        </div>
+        <div>
+          <label for="movesInput">Moves string</label>
+          <input id="movesInput" class="input" type="text" placeholder="3 2 3 4">
+        </div>
+      </div>
+      <div class="stack" style="margin-top:14px">
+        <div class="card"><div class="label">Engine status</div><div id="engineStatus" class="value status-warn">WASM not available yet</div></div>
+        <div class="card"><div class="label">Side to move</div><div id="sideToMove" class="value">Yellow</div></div>
+        <div class="card"><div class="label">Best move</div><div id="bestMove" class="value">-</div></div>
+        <div class="card"><div class="label">Score</div><div id="evalScore" class="value">-</div></div>
+        <div class="card"><div class="label">Depth reached</div><div id="depthReached" class="value">-</div></div>
+      </div>
+    </aside>
+
+    <main class="panel center">
+      <div class="drop-row" id="dropRow"><button class="drop-btn">↓ 0</button><button class="drop-btn">↓ 1</button><button class="drop-btn">↓ 2</button><button class="drop-btn">↓ 3</button><button class="drop-btn">↓ 4</button><button class="drop-btn">↓ 5</button><button class="drop-btn">↓ 6</button></div>
+      <div class="board-wrap" id="board"><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div><div class="cell"><div class="disc"></div></div></div>
+      <div class="stats">
+        <div class="card"><div class="label">Principal variation</div><div id="pvLine" class="value pv">-</div></div>
+        <div class="card"><div class="label">Current moves</div><div id="movesPreview" class="value pv">-</div></div>
+      </div>
+    </main>
+
+    <aside class="panel right">
+      <h2 style="margin:0 0 12px">Move list</h2>
+      <div class="moves" id="movesList"><div class="move muted">No moves yet</div></div>
+      <div class="card" style="margin-top:14px">
+        <div class="label">How this works</div>
+        <p class="hint">This page sends the move history to the compiled C++ engine through exported WebAssembly functions such as <code>set_position_from_moves</code>, <code>search_bestmove</code>, and <code>get_pv_line</code>.</p>
+      </div>
+    </aside>
+  </div>
+
+  
+  
+
+
+</body></html>
+------MultipartBoundary--mSEwIng3CqUGjuSd2ONBYWBhEKWfZy3hTEZnx2CRUp----
+Content-Type: text/css
+Content-Transfer-Encoding: binary
+Content-Location: https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=clash-display@600&display=swap
+
+@charset "utf-8";
+
+@font-face { font-family: Satoshi; src: url("//cdn.fontshare.com/wf/TTX2Z3BF3P6Y5BQT3IV2VNOK6FL22KUT/7QYRJOI3JIMYHGY6CH7SOIFRQLZOLNJ6/KFIAZD4RUMEZIYV6FQ3T3GP5PDBDB6JY.woff2") format("woff2"), url("//cdn.fontshare.com/wf/TTX2Z3BF3P6Y5BQT3IV2VNOK6FL22KUT/7QYRJOI3JIMYHGY6CH7SOIFRQLZOLNJ6/KFIAZD4RUMEZIYV6FQ3T3GP5PDBDB6JY.woff") format("woff"), url("//cdn.fontshare.com/wf/TTX2Z3BF3P6Y5BQT3IV2VNOK6FL22KUT/7QYRJOI3JIMYHGY6CH7SOIFRQLZOLNJ6/KFIAZD4RUMEZIYV6FQ3T3GP5PDBDB6JY.ttf") format("truetype"); font-weight: 400; font-display: swap; font-style: normal; }
+
+@font-face { font-family: Satoshi; src: url("//cdn.fontshare.com/wf/P2LQKHE6KA6ZP4AAGN72KDWMHH6ZH3TA/ZC32TK2P7FPS5GFTL46EU6KQJA24ZYDB/7AHDUZ4A7LFLVFUIFSARGIWCRQJHISQP.woff2") format("woff2"), url("//cdn.fontshare.com/wf/P2LQKHE6KA6ZP4AAGN72KDWMHH6ZH3TA/ZC32TK2P7FPS5GFTL46EU6KQJA24ZYDB/7AHDUZ4A7LFLVFUIFSARGIWCRQJHISQP.woff") format("woff"), url("//cdn.fontshare.com/wf/P2LQKHE6KA6ZP4AAGN72KDWMHH6ZH3TA/ZC32TK2P7FPS5GFTL46EU6KQJA24ZYDB/7AHDUZ4A7LFLVFUIFSARGIWCRQJHISQP.ttf") format("truetype"); font-weight: 500; font-display: swap; font-style: normal; }
+
+@font-face { font-family: Satoshi; src: url("//cdn.fontshare.com/wf/LAFFD4SDUCDVQEXFPDC7C53EQ4ZELWQI/PXCT3G6LO6ICM5I3NTYENYPWJAECAWDD/GHM6WVH6MILNYOOCXHXB5GTSGNTMGXZR.woff2") format("woff2"), url("//cdn.fontshare.com/wf/LAFFD4SDUCDVQEXFPDC7C53EQ4ZELWQI/PXCT3G6LO6ICM5I3NTYENYPWJAECAWDD/GHM6WVH6MILNYOOCXHXB5GTSGNTMGXZR.woff") format("woff"), url("//cdn.fontshare.com/wf/LAFFD4SDUCDVQEXFPDC7C53EQ4ZELWQI/PXCT3G6LO6ICM5I3NTYENYPWJAECAWDD/GHM6WVH6MILNYOOCXHXB5GTSGNTMGXZR.ttf") format("truetype"); font-weight: 700; font-display: swap; font-style: normal; }
+
+@font-face { font-family: "Clash Display"; src: url("//cdn.fontshare.com/wf/FPDAZ2S6SW4QMSRIIKNNGTPM6VIXYMKO/5HNPQ453FRLIQWV2FNOBUU3FKTDZQVSG/Z3MGHFHX6DCTLQ55LJYRJ5MDCZPMFZU6.woff2") format("woff2"), url("//cdn.fontshare.com/wf/FPDAZ2S6SW4QMSRIIKNNGTPM6VIXYMKO/5HNPQ453FRLIQWV2FNOBUU3FKTDZQVSG/Z3MGHFHX6DCTLQ55LJYRJ5MDCZPMFZU6.woff") format("woff"), url("//cdn.fontshare.com/wf/FPDAZ2S6SW4QMSRIIKNNGTPM6VIXYMKO/5HNPQ453FRLIQWV2FNOBUU3FKTDZQVSG/Z3MGHFHX6DCTLQ55LJYRJ5MDCZPMFZU6.ttf") format("truetype"); font-weight: 600; font-display: swap; font-style: normal; }
+------MultipartBoundary--mSEwIng3CqUGjuSd2ONBYWBhEKWfZy3hTEZnx2CRUp----
+Content-Type: text/css
+Content-Transfer-Encoding: binary
+Content-Location: cid:css-60a02f33-f2ab-4018-87f1-3a4c4de6cae3@mhtml.blink
+
+@charset "utf-8";
+
+:root, [data-theme="light"] { --bg: #f7f6f2; --surface: #fbfbf9; --surface2: #f1efe9; --text: #28251d; --muted: #736f66; --primary: #01696f; --border: rgba(40,37,29,.12); --red: #d94b5e; --yellow: #e0b310; --blue: #0d47a1; --hole: #0e1830; --shadow: 0 18px 54px rgba(0,0,0,.12); }
+
+[data-theme="dark"] { --bg: #131311; --surface: #1c1c1a; --surface2: #242420; --text: #ece8df; --muted: #a7a194; --primary: #5aa7b2; --border: rgba(255,255,255,.1); --red: #ff6b7d; --yellow: #ffd54f; --blue: #0b4db3; --hole: #0a1324; --shadow: 0 18px 54px rgba(0,0,0,.35); }
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0px; }
+
+body { font-family: Satoshi, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+.app { max-width: 1320px; margin: 0px auto; padding: 24px; display: grid; grid-template-columns: 300px 1fr 320px; gap: 20px; }
+
+.panel { background: var(--surface); border: 1px solid var(--border); border-radius: 22px; box-shadow: var(--shadow); }
+
+.left, .center, .right { padding: 20px; }
+
+.title { font-family: "Clash Display", sans-serif; font-size: 34px; line-height: 1.03; margin: 0px 0px 8px; }
+
+.sub { color: var(--muted); font-size: 14px; line-height: 1.6; margin: 0px 0px 18px; }
+
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0px; }
+
+.btn, .drop-btn, select, input { font: inherit; }
+
+.btn { border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; border-radius: 14px; padding: 11px 14px; background: var(--primary); color: rgb(255, 255, 255); cursor: pointer; }
+
+.btn.alt { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+
+.stack { display: flex; flex-direction: column; gap: 12px; }
+
+.card { background: var(--surface2); border: 1px solid var(--border); border-radius: 18px; padding: 14px; }
+
+.label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+.value { margin-top: 6px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+.controls { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+
+.controls label { font-size: 13px; color: var(--muted); display: block; margin-bottom: 6px; }
+
+.input { width: 100%; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); color: var(--text); padding: 10px 12px; }
+
+.drop-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; max-width: 640px; margin: 0px auto 14px; }
+
+.drop-btn { padding: 10px 0px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); cursor: pointer; }
+
+.board-wrap { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; background: var(--blue); padding: 16px; border-radius: 24px; max-width: 640px; margin: 0px auto; }
+
+.cell { aspect-ratio: 1 / 1; border-radius: 50%; background: var(--hole); position: relative; overflow: hidden; border: 2px solid rgba(255, 255, 255, 0.08); }
+
+.disc { position: absolute; inset: 8%; border-radius: 50%; background: rgb(31, 45, 74); transition: transform 0.16s, background 0.16s; }
+
+.disc.p1 { background: var(--yellow); }
+
+.disc.p2 { background: var(--red); }
+
+.stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 18px; }
+
+.pv { line-height: 1.6; font-size: 14px; }
+
+.moves { display: flex; flex-direction: column; gap: 8px; max-height: 360px; overflow: auto; }
+
+.move { padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface2); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+.status-ok { color: rgb(54, 201, 122); }
+
+.status-warn { color: rgb(240, 184, 74); }
+
+.muted { color: var(--muted); }
+
+code { background: rgba(255, 255, 255, 0.06); padding: 2px 6px; border-radius: 8px; }
+
+.hint { font-size: 13px; line-height: 1.6; color: var(--muted); }
+
+@media (max-width: 1100px) {
+  .app { grid-template-columns: 1fr; }
+  .left, .center, .right { padding: 18px; }
+}
+------MultipartBoundary--mSEwIng3CqUGjuSd2ONBYWBhEKWfZy3hTEZnx2CRUp------
