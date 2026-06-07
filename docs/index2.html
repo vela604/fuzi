@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connect-4 Engine — Fuzi</title>
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=clash-display@600&display=swap" rel="stylesheet">
+  <style>
+    :root,[data-theme="light"]{--bg:#f7f6f2;--surface:#fbfbf9;--surface2:#f1efe9;--text:#28251d;--muted:#736f66;--primary:#01696f;--primary-h:#0c4e54;--border:rgba(40,37,29,.12);--red:#d94b5e;--yellow:#e0b310;--blue:#0d47a1;--hole:#0e1830;--shadow:0 18px 54px rgba(0,0,0,.10);--radius:22px;--radius-sm:14px;--radius-xs:10px;--transition:160ms cubic-bezier(.16,1,.3,1)}
+    [data-theme="dark"]{--bg:#131311;--surface:#1c1c1a;--surface2:#242420;--text:#ece8df;--muted:#a7a194;--primary:#5aa7b2;--primary-h:#227f8b;--border:rgba(255,255,255,.09);--red:#ff6b7d;--yellow:#ffd54f;--blue:#0b4db3;--hole:#0a1324;--shadow:0 18px 54px rgba(0,0,0,.35)}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{-webkit-font-smoothing:antialiased}
+    body{font-family:'Satoshi',sans-serif;font-size:15px;line-height:1.6;background:var(--bg);color:var(--text);min-height:100dvh}
+    button{cursor:pointer;font:inherit}input{font:inherit}
+    .app{max-width:1320px;margin:0 auto;padding:20px;display:grid;grid-template-columns:290px 1fr 300px;gap:18px;align-items:start}
+    @media(max-width:1100px){.app{grid-template-columns:1fr}}
+    .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
+    .site-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
+    .logo{display:flex;align-items:center;gap:10px;font-family:'Clash Display',sans-serif;font-size:20px}
+    .logo svg{color:var(--primary)}
+    .theme-btn{background:none;border:1px solid var(--border);border-radius:var(--radius-xs);padding:7px 9px;color:var(--muted);transition:color var(--transition),border-color var(--transition)}
+    .theme-btn:hover{color:var(--text);border-color:var(--primary)}
+    .title{font-family:'Clash Display',sans-serif;font-size:clamp(22px,3vw,30px);line-height:1.1;margin-bottom:8px}
+    .sub{color:var(--muted);font-size:13px;line-height:1.6;margin-bottom:18px}
+    .section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+    .btn{border:none;border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;font-weight:500;background:var(--primary);color:#fff;transition:background var(--transition),transform var(--transition)}
+    .btn:hover{background:var(--primary-h)}.btn:active{transform:scale(.97)}
+    .btn.alt{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+    .btn.alt:hover{border-color:var(--primary);color:var(--primary)}
+    .toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+    .form-group{margin-bottom:14px}
+    .form-group label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
+    .input{width:100%;padding:9px 12px;border-radius:var(--radius-xs);border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;transition:border-color var(--transition)}
+    .input:focus{outline:none;border-color:var(--primary)}
+    .stack{display:flex;flex-direction:column;gap:10px}
+    .card{background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:12px 14px}
+    .card .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+    .card .value{margin-top:5px;font-family:ui-monospace,'SFMono-Regular',Menlo,monospace;font-size:13px;word-break:break-all}
+    .ok{color:#36c97a}.warn{color:#f0b84a}.err{color:var(--red)}.dim{color:var(--muted)}
+    .board-section{display:flex;flex-direction:column;align-items:center;gap:10px}
+    .drop-row{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;width:100%;max-width:560px}
+    .drop-btn{padding:8px 0;border-radius:10px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);font-size:12px;transition:background var(--transition),color var(--transition),border-color var(--transition)}
+    .drop-btn:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
+    .drop-btn:active{transform:scale(.95)}
+    .board-wrap{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;padding:14px;background:var(--blue);border-radius:20px;width:100%;max-width:560px;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+    .cell{aspect-ratio:1/1;border-radius:50%;background:var(--hole);position:relative;overflow:hidden;border:2px solid rgba(255,255,255,.07)}
+    .disc{position:absolute;inset:7%;border-radius:50%;background:transparent;transition:background .18s ease}
+    .disc.p1{background:var(--yellow);box-shadow:0 2px 8px rgba(224,179,16,.4)}
+    .disc.p2{background:var(--red);box-shadow:0 2px 8px rgba(217,75,94,.4)}
+    .board-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:560px}
+    .moves-list{display:flex;flex-direction:column;gap:7px;max-height:400px;overflow-y:auto;padding-right:2px}
+    .moves-list::-webkit-scrollbar{width:4px}
+    .moves-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+    .move-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:12px;border:1px solid var(--border);background:var(--surface2);font-family:ui-monospace,monospace;font-size:12px}
+    .move-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+    .move-dot.p1{background:var(--yellow)}.move-dot.p2{background:var(--red)}
+    .move-num{color:var(--muted);font-size:11px;min-width:18px}
+    .hint-card{margin-top:14px}
+    .hint-card p{font-size:12px;color:var(--muted);line-height:1.7;margin-top:6px}
+    .hint-card code{background:rgba(90,167,178,.12);color:var(--primary);padding:1px 5px;border-radius:5px;font-size:11px}
+    .divider{height:1px;background:var(--border);margin:14px 0}
+    @media(max-width:600px){.board-wrap{gap:5px;padding:10px}.drop-row{gap:5px}.board-stats{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="logo">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-label="Fuzi">
+        <rect x="1" y="1" width="26" height="26" rx="7" stroke="currentColor" stroke-width="2"/>
+        <circle cx="8" cy="14" r="3.5" fill="currentColor" opacity=".3"/>
+        <circle cx="14" cy="14" r="3.5" fill="currentColor"/>
+        <circle cx="20" cy="14" r="3.5" fill="currentColor" opacity=".3"/>
+      </svg>
+      Fuzi
+    </div>
+    <button class="theme-btn" data-theme-toggle aria-label="Toggle theme">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </header>
+
+  <div class="app">
+    <aside class="panel left">
+      <h1 class="title">Connect-4<br>Analysis</h1>
+      <p class="sub">WebAssembly frontend for your C++ engine. Play moves then analyze.</p>
+      <div class="toolbar">
+        <button class="btn" id="newGameBtn">New game</button>
+        <button class="btn alt" id="undoBtn">↩ Undo</button>
+        <button class="btn alt" id="checkEngineBtn">Check engine</button>
+        <button class="btn" id="analyzeBtn">⚡ Analyze</button>
+      </div>
+      <div class="form-group">
+        <label for="depthInput">Search depth</label>
+        <input id="depthInput" class="input" type="number" min="1" max="20" value="12"/>
+      </div>
+      <div class="form-group">
+        <label for="movesInput">Moves string (cols 0–6)</label>
+        <input id="movesInput" class="input" type="text" placeholder="3 3 2 4 1"/>
+      </div>
+      <div class="divider"></div>
+      <div class="stack">
+        <div class="card"><div class="label">Engine status</div><div id="engineStatus" class="value warn">engine.js not loaded yet</div></div>
+        <div class="card"><div class="label">Side to move</div><div id="sideToMove" class="value">🟡 Yellow (P1)</div></div>
+        <div class="card"><div class="label">Best move</div><div id="bestMove" class="value dim">—</div></div>
+        <div class="card"><div class="label">Score</div><div id="evalScore" class="value dim">—</div></div>
+        <div class="card"><div class="label">Depth reached</div><div id="depthReached" class="value dim">—</div></div>
+      </div>
+    </aside>
+
+    <main class="panel board-section">
+      <div class="drop-row" id="dropRow"></div>
+      <div class="board-wrap" id="board"></div>
+      <div class="board-stats">
+        <div class="card"><div class="label">Principal variation</div><div id="pvLine" class="value dim">—</div></div>
+        <div class="card"><div class="label">Move history</div><div id="movesPreview" class="value dim">—</div></div>
+      </div>
+    </main>
+
+    <aside class="panel right">
+      <div class="section-label">Move list</div>
+      <div class="moves-list" id="movesList">
+        <div class="move-item"><span class="dim" style="font-size:12px">No moves yet</span></div>
+      </div>
+      <div class="divider"></div>
+      <div class="hint-card card">
+        <div class="label">How this works</div>
+        <p>Calls C++ engine via WASM exports: <code>set_position_from_moves</code>, <code>search_bestmove</code>, <code>get_pv_line</code>. Build <code>engine.js</code> using <code>build-wasm.sh</code> and place in same folder.</p>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    (function(){var h=document.documentElement,b=document.querySelector('[data-theme-toggle]'),d=window.matchMedia('(prefers-color-scheme:dark)').matches,t=d?'dark':'light';h.setAttribute('data-theme',t);function si(x){if(!b)return;b.innerHTML=x==='dark'?'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>':'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';}si(t);if(b)b.addEventListener('click',function(){t=t==='dark'?'light':'dark';h.setAttribute('data-theme',t);si(t);});})();
+
+    var ROWS=6,COLS=7,board=[],moves=[],turn=1;
+    function initBoard(){board=[];for(var r=0;r<ROWS;r++)board.push(new Array(COLS).fill(0));}
+    initBoard();
+
+    var boardEl=document.getElementById('board'),dropRowEl=document.getElementById('dropRow'),
+        movesListEl=document.getElementById('movesList'),movesInputEl=document.getElementById('movesInput'),
+        movesPreview=document.getElementById('movesPreview'),engineStatusEl=document.getElementById('engineStatus'),
+        sideToMoveEl=document.getElementById('sideToMove'),bestMoveEl=document.getElementById('bestMove'),
+        evalScoreEl=document.getElementById('evalScore'),pvLineEl=document.getElementById('pvLine'),
+        depthReachedEl=document.getElementById('depthReached'),depthInput=document.getElementById('depthInput');
+
+    function renderBoard(){
+      boardEl.innerHTML='';
+      for(var r=ROWS-1;r>=0;r--){for(var c=0;c<COLS;c++){var cell=document.createElement('div');cell.className='cell';var disc=document.createElement('div');var v=board[r][c];disc.className='disc'+(v===1?' p1':v===2?' p2':'');cell.appendChild(disc);boardEl.appendChild(cell);}}
+      sideToMoveEl.textContent=turn===1?'🟡 Yellow (P1)':'🔴 Red (P2)';
+      movesPreview.textContent=moves.length?moves.join(' '):'—';
+      movesInputEl.value=moves.join(' ');
+      renderMoveList();
+    }
+    function renderMoveList(){
+      if(!moves.length){movesListEl.innerHTML='<div class="move-item"><span class="dim" style="font-size:12px">No moves yet</span></div>';return;}
+      movesListEl.innerHTML=moves.map(function(m,i){var p=i%2===0?1:2;return'<div class="move-item"><span class="move-num">'+(i+1)+'.</span><span class="move-dot p'+p+'"></span><span>Col '+m+' ('+(p===1?'Yellow':'Red')+')</span></div>';}).join('');
+      movesListEl.scrollTop=movesListEl.scrollHeight;
+    }
+    function renderDropButtons(){
+      dropRowEl.innerHTML='';
+      for(var c=0;c<COLS;c++){(function(col){var btn=document.createElement('button');btn.className='drop-btn';btn.textContent='↓ '+col;btn.addEventListener('click',function(){playMove(col);});dropRowEl.appendChild(btn);})(c);}
+    }
+    function playMove(col){for(var r=0;r<ROWS;r++){if(board[r][col]===0){board[r][col]=turn;moves.push(col);turn=turn===1?2:1;renderBoard();return true;}}return false;}
+    function undoMove(){if(!moves.length)return;var last=moves.pop();for(var r=ROWS-1;r>=0;r--){if(board[r][last]!==0){board[r][last]=0;break;}}turn=turn===1?2:1;renderBoard();}
+    function resetGame(){initBoard();moves=[];turn=1;bestMoveEl.textContent='—';bestMoveEl.className='value dim';evalScoreEl.textContent='—';evalScoreEl.className='value dim';depthReachedEl.textContent='—';pvLineEl.textContent='—';renderBoard();}
+    function rebuildFromString(str){initBoard();moves=[];turn=1;var parts=(str||'').trim().split(/s+/).filter(function(s){return s!=='';});for(var i=0;i<parts.length;i++){var col=parseInt(parts[i],10);if(isNaN(col)||col<0||col>=COLS)return false;if(!playMove(col))return false;}renderBoard();return true;}
+    function engineReady(){return typeof Module!=='undefined'&&Module&&typeof Module.ccall==='function';}
+    function checkEngine(){if(engineReady()){engineStatusEl.textContent='✅ WASM ready';engineStatusEl.className='value ok';}else{engineStatusEl.textContent='⚠️ WASM not loaded';engineStatusEl.className='value warn';}}
+    function analyzePosition(){
+      if(!engineReady()){checkEngine();pvLineEl.textContent='engine.js not available';return;}
+      var depth=parseInt(depthInput.value||'12',10),movesStr=moves.join(' ');
+      try{
+        Module.ccall('set_position_from_moves',null,['string'],[movesStr]);
+        var best=Module.ccall('search_bestmove','number',['number'],[depth]);
+        var score=Module.ccall('search_score','number',[],[]);
+        var reached=Module.ccall('search_depth','number',[],[]);
+        var pv=Module.ccall('get_pv_line','string',[],[]);
+        bestMoveEl.textContent='Column '+best;bestMoveEl.className='value ok';
+        evalScoreEl.textContent=String(score);evalScoreEl.className='value ok';
+        depthReachedEl.textContent=String(reached);
+        pvLineEl.textContent=pv||'—';
+        engineStatusEl.textContent='✅ Analysis done';engineStatusEl.className='value ok';
+      }catch(err){engineStatusEl.textContent='❌ WASM error';engineStatusEl.className='value err';pvLineEl.textContent=err.message;}
+    }
+
+    document.getElementById('newGameBtn').addEventListener('click',resetGame);
+    document.getElementById('undoBtn').addEventListener('click',undoMove);
+    document.getElementById('checkEngineBtn').addEventListener('click',checkEngine);
+    document.getElementById('analyzeBtn').addEventListener('click',analyzePosition);
+    movesInputEl.addEventListener('keydown',function(e){if(e.key==='Enter'){var ok=rebuildFromString(movesInputEl.value);if(!ok){engineStatusEl.textContent='⚠️ Invalid moves';engineStatusEl.className='value warn';}}});
+    movesInputEl.addEventListener('blur',function(){rebuildFromString(movesInputEl.value);});
+
+    renderDropButtons();
+    renderBoard();
+    checkEngine();
+  </script>
+  <script src="engine.js"></script>
+</body>
+</html>
