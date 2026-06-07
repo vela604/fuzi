@@ -693,7 +693,7 @@
     statusDotEl.className = 'status-dot';
     analyzeBtn.disabled = true;
     createWorker();
-    const engineUrl = new URL('engine.js', window.location.href).href;
+    const engineUrl = './engine.js';
     worker.postMessage({ type: 'INIT', payload: { engineUrl } });
   }
 
