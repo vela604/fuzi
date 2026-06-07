@@ -1,27 +1,43 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Connect-4 Live Analysis</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analysis</title>
   <link rel="preconnect" href="https://api.fontshare.com">
   <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=clash-display@600&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#07111d;--surface:#0d1f35;--surface2:#132843;
-      --text:#eef5ff;--muted:#7a9ab5;--faint:#2a4060;
-      --accent:#5ecfea;--green:#5ee89a;--red:#ff6b7d;
-      --yellow:#ffd54f;--blue:#1550b8;--hole:#071529;
+      --bg:#07111d;
+      --surface:#0d1f35;
+      --surface2:#132843;
+      --text:#eef5ff;
+      --muted:#7a9ab5;
+      --faint:#2a4060;
+      --accent:#5ecfea;
+      --green:#5ee89a;
+      --red:#ff6b7d;
+      --yellow:#ffd54f;
+      --hole:#071529;
       --shadow:0 20px 60px rgba(0,0,0,.5);
-      --r:20px;--rs:12px;--rx:8px;
+      --rx:8px;
       --ease:180ms cubic-bezier(.16,1,.3,1);
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%;overflow:hidden}
-    body{font-family:'Satoshi',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;height:100dvh}
+    body{
+      font-family:'Satoshi',sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      display:flex;
+      flex-direction:column;
+      height:100dvh;
+    }
 
     .topbar{
-      display:flex;align-items:center;justify-content:space-between;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
       padding:10px 14px;
       background:rgba(13,31,53,.96);
       border-bottom:1px solid rgba(255,255,255,.06);
@@ -30,111 +46,164 @@
     }
     .topbar-left{display:flex;align-items:center;gap:8px}
     .icon-btn{
-      width:34px;height:34px;border-radius:var(--rx);border:1px solid rgba(255,255,255,.1);
-      background:rgba(255,255,255,.05);color:var(--text);display:grid;place-items:center;
-      font-size:16px;cursor:pointer;transition:background var(--ease)
+      width:34px;height:34px;border-radius:var(--rx);
+      border:1px solid rgba(255,255,255,.1);
+      background:rgba(255,255,255,.05);
+      color:var(--text);
+      display:grid;place-items:center;
+      font-size:16px;
+      cursor:pointer;
     }
-    .icon-btn:hover{background:rgba(255,255,255,.12)}
-    .page-title{font-weight:700;font-size:16px;letter-spacing:.03em}
+    .page-title{font-weight:700;font-size:16px}
 
     .engine-strip{
-      flex-shrink:0;padding:8px 14px;
+      flex-shrink:0;
+      padding:8px 14px;
       background:rgba(13,31,53,.9);
       border-bottom:1px solid rgba(255,255,255,.05);
-      display:flex;flex-direction:column;gap:5px;
+      display:flex;
+      flex-direction:column;
+      gap:5px;
     }
     .eval-row{display:flex;align-items:center;gap:10px}
     .eval-badge{
-      min-width:52px;padding:6px 8px;border-radius:var(--rx);
-      background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.08);
-      font-weight:700;font-size:15px;text-align:center;font-variant-numeric:tabular-nums;
-      transition:color var(--ease)
+      min-width:52px;
+      padding:6px 8px;
+      border-radius:var(--rx);
+      background:rgba(0,0,0,.3);
+      border:1px solid rgba(255,255,255,.08);
+      font-weight:700;
+      font-size:15px;
+      text-align:center;
+      font-variant-numeric:tabular-nums;
     }
     .eval-badge.pos{color:var(--green)}
     .eval-badge.neg{color:var(--red)}
     .eval-badge.zero{color:var(--muted)}
     .pv-scroll{
-      flex:1;font-size:12px;color:#9bbdd4;white-space:nowrap;
-      overflow:hidden;text-overflow:ellipsis;line-height:1.4;
-      font-family:ui-monospace,monospace
+      flex:1;
+      font-size:12px;
+      color:#9bbdd4;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      font-family:ui-monospace,monospace;
     }
-    .pv-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;min-width:20px}
-
+    .pv-label{
+      font-size:10px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.07em;
+      min-width:20px;
+    }
     .depth-row{display:flex;align-items:center;gap:8px}
-    .depth-text{font-size:11px;color:var(--muted);min-width:48px;font-variant-numeric:tabular-nums}
+    .depth-text{
+      font-size:11px;
+      color:var(--muted);
+      min-width:48px;
+      font-variant-numeric:tabular-nums;
+    }
     .bar-track{
-      flex:1;height:5px;border-radius:999px;
-      background:rgba(255,255,255,.07);overflow:hidden
+      flex:1;
+      height:5px;
+      border-radius:999px;
+      background:rgba(255,255,255,.07);
+      overflow:hidden;
     }
     .bar-fill{
-      height:100%;width:0%;border-radius:999px;
+      height:100%;
+      width:0%;
+      border-radius:999px;
       background:linear-gradient(90deg,var(--accent),#a0f0ff);
-      transition:width .22s ease
+      transition:width .22s ease;
     }
-    .depth-label{font-size:11px;color:var(--text);min-width:54px;text-align:right;font-variant-numeric:tabular-nums}
-    .engine-status{display:flex;align-items:center;gap:5px;font-size:11px;}
+    .depth-label{
+      font-size:11px;
+      color:var(--text);
+      min-width:54px;
+      text-align:right;
+      font-variant-numeric:tabular-nums;
+    }
+    .engine-status{display:flex;align-items:center;gap:5px;font-size:11px}
     .status-dot{
-      width:7px;height:7px;border-radius:50%;background:var(--muted);
-      transition:background .3s ease;flex-shrink:0
+      width:7px;height:7px;border-radius:50%;
+      background:var(--muted);
+      transition:background .3s ease;
+      flex-shrink:0;
     }
     .status-dot.ready{background:var(--green);box-shadow:0 0 6px var(--green)}
-    .status-dot.thinking{background:var(--accent);animation:pulse 1s infinite;}
+    .status-dot.thinking{background:var(--accent)}
     .status-dot.done{background:var(--green)}
     .status-dot.error{background:var(--red)}
-    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
     .status-text{color:var(--muted)}
 
     .board-area{
-      flex:1;display:flex;flex-direction:column;
-      align-items:center;justify-content:center;
-      padding:10px 14px 6px;min-height:0;
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      padding:10px 14px 6px;
+      min-height:0;
     }
     .drop-row{
-      display:grid;grid-template-columns:repeat(7,1fr);
-      gap:6px;width:100%;max-width:420px;margin-bottom:8px;
+      display:grid;
+      grid-template-columns:repeat(7,1fr);
+      gap:6px;
+      width:100%;
+      max-width:420px;
+      margin-bottom:8px;
     }
     .drop-btn{
-      padding:7px 0;border-radius:var(--rx);
+      padding:7px 0;
+      border-radius:var(--rx);
       border:1px solid rgba(255,255,255,.08);
-      background:rgba(255,255,255,.04);color:var(--muted);
-      font-size:12px;cursor:pointer;
-      transition:background var(--ease),color var(--ease),border-color var(--ease),transform .1s;
+      background:rgba(255,255,255,.04);
+      color:var(--muted);
+      font-size:12px;
+      cursor:pointer;
     }
-    .drop-btn:hover{background:var(--accent);color:#000;border-color:var(--accent)}
-    .drop-btn:active{transform:scale(.93)}
     .drop-btn.best-col{
       background:rgba(94,207,234,.18);
-      border-color:var(--accent);color:var(--accent);
+      border-color:var(--accent);
+      color:var(--accent);
     }
     .board-wrap{
-      width:100%;max-width:420px;
+      width:100%;
+      max-width:420px;
       aspect-ratio:7/6;
-      border-radius:18px;padding:10px;
+      border-radius:18px;
+      padding:10px;
       background:linear-gradient(160deg,#1a5dc8,#0c3d9c);
       box-shadow:0 12px 40px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.12);
     }
     .board-grid{
-      width:100%;height:100%;
-      display:grid;grid-template-columns:repeat(7,1fr);gap:6px;
+      width:100%;
+      height:100%;
+      display:grid;
+      grid-template-columns:repeat(7,1fr);
+      gap:6px;
     }
     .cell{
-      background:var(--hole);border-radius:50%;
-      position:relative;overflow:hidden;
+      background:var(--hole);
+      border-radius:50%;
+      position:relative;
+      overflow:hidden;
       box-shadow:inset 0 2px 6px rgba(0,0,0,.5),inset 0 -2px 3px rgba(255,255,255,.05);
-      cursor:pointer;transition:transform .1s;
+      cursor:pointer;
     }
-    .cell:hover{transform:scale(1.05)}
     .disc{
-      position:absolute;inset:8%;border-radius:50%;
-      transition:background .14s ease,box-shadow .14s ease
+      position:absolute;
+      inset:8%;
+      border-radius:50%;
     }
     .disc.p1{
       background:linear-gradient(160deg,#ffe97a,#ffd54f 60%,#c8a700);
-      box-shadow:0 2px 8px rgba(255,213,79,.4),inset 0 1px 0 rgba(255,255,255,.3)
+      box-shadow:0 2px 8px rgba(255,213,79,.4),inset 0 1px 0 rgba(255,255,255,.3);
     }
     .disc.p2{
       background:linear-gradient(160deg,#ff9aa8,#ff6b7d 60%,#c73352);
-      box-shadow:0 2px 8px rgba(255,107,125,.4),inset 0 1px 0 rgba(255,255,255,.2)
+      box-shadow:0 2px 8px rgba(255,107,125,.4),inset 0 1px 0 rgba(255,255,255,.2);
     }
     .disc.win-disc{
       box-shadow:0 0 0 3px #fff,0 0 16px rgba(255,255,255,.6) !important;
@@ -146,88 +215,131 @@
       border-top:1px solid rgba(255,255,255,.07);
       border-radius:20px 20px 0 0;
       padding:8px 14px 14px;
-      max-height:220px;overflow-y:auto;
+      max-height:220px;
+      overflow-y:auto;
     }
     .sheet-handle{
-      width:40px;height:4px;border-radius:999px;
-      background:rgba(255,255,255,.15);margin:0 auto 10px;
+      width:40px;
+      height:4px;
+      border-radius:999px;
+      background:rgba(255,255,255,.15);
+      margin:0 auto 10px;
     }
-    .sheet-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .sheet-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:8px;
+    }
     .sheet-head h3{font-size:13px;font-weight:700}
     .live-badge{
-      font-size:9px;padding:2px 7px;border-radius:999px;
-      background:rgba(94,232,154,.15);color:var(--green);
+      font-size:9px;
+      padding:2px 7px;
+      border-radius:999px;
+      background:rgba(94,232,154,.15);
+      color:var(--green);
       border:1px solid rgba(94,232,154,.3);
-      text-transform:uppercase;letter-spacing:.08em
+      text-transform:uppercase;
+      letter-spacing:.08em;
     }
-    .live-badge.searching{animation:pulse 1s infinite}
     .moves-list{display:flex;flex-direction:column;gap:5px}
     .move-row{
-      display:grid;grid-template-columns:24px 1fr 1fr 42px;
-      gap:6px;align-items:center;padding:5px 8px;
-      border-radius:var(--rx);font-size:12px;
+      display:grid;
+      grid-template-columns:24px 1fr 1fr 42px;
+      gap:6px;
+      align-items:center;
+      padding:5px 8px;
+      border-radius:var(--rx);
+      font-size:12px;
       border:1px solid transparent;
     }
-    .move-row.current{background:rgba(94,207,234,.1);border-color:rgba(94,207,234,.2)}
+    .move-row.current{
+      background:rgba(94,207,234,.1);
+      border-color:rgba(94,207,234,.2);
+    }
     .move-no{color:var(--muted);font-size:11px}
     .move-cell{display:flex;flex-direction:column;gap:1px}
     .move-col{font-weight:600;font-family:ui-monospace,monospace}
     .move-who{font-size:10px;color:var(--muted)}
-    .move-disc{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px;vertical-align:middle}
+    .move-disc{
+      width:8px;height:8px;border-radius:50%;
+      display:inline-block;margin-right:4px;vertical-align:middle;
+    }
     .move-disc.p1{background:var(--yellow)}
     .move-disc.p2{background:var(--red)}
     .move-eval-val{text-align:right;font-size:11px;color:var(--muted);font-family:ui-monospace,monospace}
 
     .bottom-nav{
       flex-shrink:0;
-      display:grid;grid-template-columns:1fr 1fr 60px 1fr 1fr;
+      display:grid;
+      grid-template-columns:1fr 1fr 60px 1fr 1fr;
       padding:8px 14px 18px;
       background:rgba(7,17,29,.96);
       border-top:1px solid rgba(255,255,255,.05);
     }
     .nav-btn{
-      display:flex;flex-direction:column;align-items:center;gap:3px;
-      font-size:10px;color:var(--muted);cursor:pointer;
-      background:none;border:none;padding:4px;
-      transition:color var(--ease)
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:3px;
+      font-size:10px;
+      color:var(--muted);
+      cursor:pointer;
+      background:none;
+      border:none;
+      padding:4px;
     }
-    .nav-btn:hover{color:var(--text)}
     .nav-btn .ni{
       width:32px;height:32px;border-radius:var(--rx);
-      display:grid;place-items:center;font-size:16px;
-      border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.04)
+      display:grid;place-items:center;
+      font-size:16px;
+      border:1px solid rgba(255,255,255,.07);
+      background:rgba(255,255,255,.04);
     }
     .analyze-btn{
       width:52px;height:52px;border-radius:16px;margin:0 auto;
       background:linear-gradient(160deg,#6ae64a,#44c026);
       color:#0d2a06;border:none;font-size:22px;cursor:pointer;
       box-shadow:0 8px 24px rgba(68,192,38,.3);
-      transition:transform .1s,box-shadow .1s;
     }
-    .analyze-btn:hover{transform:scale(1.06);box-shadow:0 10px 28px rgba(68,192,38,.45)}
-    .analyze-btn:active{transform:scale(.95)}
-    .analyze-btn:disabled{background:rgba(255,255,255,.1);color:var(--muted);box-shadow:none}
+    .analyze-btn:disabled{
+      background:rgba(255,255,255,.1);
+      color:var(--muted);
+      box-shadow:none;
+    }
 
     .overlay{
-      position:fixed;inset:0;background:rgba(0,0,0,.7);
-      display:none;place-items:center;z-index:100;
-      backdrop-filter:blur(6px)
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.7);
+      display:none;
+      place-items:center;
+      z-index:100;
+      backdrop-filter:blur(6px);
     }
     .overlay.show{display:grid}
     .overlay-card{
-      background:var(--surface);border:1px solid rgba(255,255,255,.12);
-      border-radius:24px;padding:28px 24px;text-align:center;
-      max-width:280px;width:90%;
+      background:var(--surface);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:24px;
+      padding:28px 24px;
+      text-align:center;
+      max-width:280px;
+      width:90%;
     }
     .overlay-emoji{font-size:48px;margin-bottom:12px}
     .overlay-title{font-family:'Clash Display',sans-serif;font-size:22px;margin-bottom:6px}
     .overlay-sub{color:var(--muted);font-size:14px;margin-bottom:20px}
     .overlay-btn{
-      border:none;border-radius:14px;padding:12px 28px;
-      background:var(--accent);color:#000;font-weight:700;font-size:15px;cursor:pointer;
-      transition:transform .1s
+      border:none;
+      border-radius:14px;
+      padding:12px 28px;
+      background:var(--accent);
+      color:#000;
+      font-weight:700;
+      font-size:15px;
+      cursor:pointer;
     }
-    .overlay-btn:hover{transform:scale(1.04)}
     .bottom-sheet::-webkit-scrollbar{width:3px}
     .bottom-sheet::-webkit-scrollbar-thumb{background:var(--faint);border-radius:3px}
   </style>
@@ -261,7 +373,7 @@
       </div>
     </div>
     <div class="depth-row">
-      <span class="depth-text" id="depthLabel">Depth</span>
+      <span class="depth-text">Depth</span>
       <div class="bar-track"><div class="bar-fill" id="barFill"></div></div>
       <span class="depth-label" id="depthVal">—</span>
     </div>
@@ -303,281 +415,432 @@
   </div>
 
   <script>
-  const ROWS=6,COLS=7,MAX_DEPTH=20;
-  const COL_ORDER=[3,2,4,1,5,0,6];
+  const ROWS = 6, COLS = 7, MAX_DEPTH = 20;
+  const UI_THROTTLE_MS = 80;
 
-  let board=mk2d(),moves=[],turn=1,gameOver=false,winCells=[];
-  let engineReady=false,searching=false,currentBestMove=-1,searchGeneration=0;
-  let lastUIUpdate=0;
-  const UI_THROTTLE_MS=80;
+  let board = mk2d();
+  let moves = [];
+  let turn = 1;
+  let gameOver = false;
+  let winCells = [];
+  let engineReady = false;
+  let searching = false;
+  let currentBestMove = -1;
+  let searchGeneration = 0;
+  let lastUIUpdate = 0;
+  let worker = null;
 
-  const boardGridEl=document.getElementById('boardGrid');
-  const dropRowEl=document.getElementById('dropRow');
-  const movesListEl=document.getElementById('movesList');
-  const evalBadgeEl=document.getElementById('evalBadge');
-  const pvLineEl=document.getElementById('pvLine');
-  const statusDotEl=document.getElementById('statusDot');
-  const statusTextEl=document.getElementById('statusText');
-  const barFillEl=document.getElementById('barFill');
-  const depthValEl=document.getElementById('depthVal');
-  const liveBadgeEl=document.getElementById('liveBadge');
-  const overlayEl=document.getElementById('overlay');
-  const analyzeBtn=document.getElementById('analyzeBtn');
+  const boardGridEl = document.getElementById('boardGrid');
+  const dropRowEl = document.getElementById('dropRow');
+  const movesListEl = document.getElementById('movesList');
+  const evalBadgeEl = document.getElementById('evalBadge');
+  const pvLineEl = document.getElementById('pvLine');
+  const statusDotEl = document.getElementById('statusDot');
+  const statusTextEl = document.getElementById('statusText');
+  const barFillEl = document.getElementById('barFill');
+  const depthValEl = document.getElementById('depthVal');
+  const liveBadgeEl = document.getElementById('liveBadge');
+  const overlayEl = document.getElementById('overlay');
+  const analyzeBtn = document.getElementById('analyzeBtn');
 
-  function mk2d(){return Array.from({length:ROWS},()=>new Array(COLS).fill(0));}
-  function colHeight(col){for(let r=0;r<ROWS;r++)if(board[r][col]===0)return r;return ROWS;}
-  function canPlay(col){return colHeight(col)<ROWS;}
+  function mk2d() {
+    return Array.from({ length: ROWS }, () => new Array(COLS).fill(0));
+  }
 
-  function checkWin(player){
-    for(let r=0;r<ROWS;r++)
-      for(let c=0;c<=COLS-4;c++)
-        if(board[r][c]===player&&board[r][c+1]===player&&board[r][c+2]===player&&board[r][c+3]===player)
-          return[[r,c],[r,c+1],[r,c+2],[r,c+3]];
-    for(let c=0;c<COLS;c++)
-      for(let r=0;r<=ROWS-4;r++)
-        if(board[r][c]===player&&board[r+1][c]===player&&board[r+2][c]===player&&board[r+3][c]===player)
-          return[[r,c],[r+1,c],[r+2,c],[r+3,c]];
-    for(let r=0;r<=ROWS-4;r++)
-      for(let c=0;c<=COLS-4;c++)
-        if(board[r][c]===player&&board[r+1][c+1]===player&&board[r+2][c+2]===player&&board[r+3][c+3]===player)
-          return[[r,c],[r+1,c+1],[r+2,c+2],[r+3,c+3]];
-    for(let r=0;r<=ROWS-4;r++)
-      for(let c=3;c<COLS;c++)
-        if(board[r][c]===player&&board[r+1][c-1]===player&&board[r+2][c-2]===player&&board[r+3][c-3]===player)
-          return[[r,c],[r+1,c-1],[r+2,c-2],[r+3,c-3]];
+  function colHeight(col) {
+    for (let r = 0; r < ROWS; r++) if (board[r][col] === 0) return r;
+    return ROWS;
+  }
+
+  function canPlay(col) {
+    return colHeight(col) < ROWS;
+  }
+
+  function isBoardFull() {
+    return moves.length >= ROWS * COLS;
+  }
+
+  function checkWin(player) {
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c <= COLS - 4; c++) {
+        if (board[r][c] === player && board[r][c + 1] === player && board[r][c + 2] === player && board[r][c + 3] === player) {
+          return [[r, c], [r, c + 1], [r, c + 2], [r, c + 3]];
+        }
+      }
+    }
+    for (let c = 0; c < COLS; c++) {
+      for (let r = 0; r <= ROWS - 4; r++) {
+        if (board[r][c] === player && board[r + 1][c] === player && board[r + 2][c] === player && board[r + 3][c] === player) {
+          return [[r, c], [r + 1, c], [r + 2, c], [r + 3, c]];
+        }
+      }
+    }
+    for (let r = 0; r <= ROWS - 4; r++) {
+      for (let c = 0; c <= COLS - 4; c++) {
+        if (board[r][c] === player && board[r + 1][c + 1] === player && board[r + 2][c + 2] === player && board[r + 3][c + 3] === player) {
+          return [[r, c], [r + 1, c + 1], [r + 2, c + 2], [r + 3, c + 3]];
+        }
+      }
+    }
+    for (let r = 0; r <= ROWS - 4; r++) {
+      for (let c = 3; c < COLS; c++) {
+        if (board[r][c] === player && board[r + 1][c - 1] === player && board[r + 2][c - 2] === player && board[r + 3][c - 3] === player) {
+          return [[r, c], [r + 1, c - 1], [r + 2, c - 2], [r + 3, c - 3]];
+        }
+      }
+    }
     return null;
   }
 
-  function isBoardFull(){return moves.length>=ROWS*COLS;}
-
-  function renderBoard(){
-    boardGridEl.innerHTML='';
-    for(let r=ROWS-1;r>=0;r--){
-      for(let c=0;c<COLS;c++){
-        const cell=document.createElement('div');
-        cell.className='cell';cell.dataset.col=c;
-        const disc=document.createElement('div');
-        const v=board[r][c];
-        disc.className='disc'+(v===1?' p1':v===2?' p2':'');
-        if(winCells.some(([wr,wc])=>wr===r&&wc===c))disc.classList.add('win-disc');
+  function renderBoard() {
+    boardGridEl.innerHTML = '';
+    for (let r = ROWS - 1; r >= 0; r--) {
+      for (let c = 0; c < COLS; c++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        const disc = document.createElement('div');
+        const v = board[r][c];
+        disc.className = 'disc' + (v === 1 ? ' p1' : v === 2 ? ' p2' : '');
+        if (winCells.some(([wr, wc]) => wr === r && wc === c)) disc.classList.add('win-disc');
         cell.appendChild(disc);
-        if(!gameOver)cell.addEventListener('click',()=>onCellClick(c));
+        if (!gameOver) cell.addEventListener('click', () => onCellClick(c));
         boardGridEl.appendChild(cell);
       }
     }
     renderDropButtons();
   }
 
-  function renderDropButtons(){
-    dropRowEl.innerHTML='';
-    for(let c=0;c<COLS;c++){
-      const btn=document.createElement('button');
-      btn.className='drop-btn'+(c===currentBestMove?' best-col':'');
-      btn.textContent='↓ '+c;
-      btn.disabled=!canPlay(c)||gameOver;
-      btn.addEventListener('click',()=>onCellClick(c));
+  function renderDropButtons() {
+    dropRowEl.innerHTML = '';
+    for (let c = 0; c < COLS; c++) {
+      const btn = document.createElement('button');
+      btn.className = 'drop-btn' + (c === currentBestMove ? ' best-col' : '');
+      btn.textContent = '↓ ' + c;
+      btn.disabled = !canPlay(c) || gameOver;
+      btn.addEventListener('click', () => onCellClick(c));
       dropRowEl.appendChild(btn);
     }
   }
 
-  function renderMoveList(){
-    if(!moves.length){movesListEl.innerHTML='<div style="font-size:12px;color:var(--muted);padding:4px 8px">No moves yet</div>';return;}
-    let html='';
-    for(let i=0;i<moves.length;i+=2){
-      const no=Math.floor(i/2)+1,w=moves[i],b=moves[i+1];
-      const isCurrent=(b===undefined)?i===moves.length-1:i+1===moves.length-1;
-      html+=`<div class="move-row${isCurrent?' current':''}">
-        <div class="move-no">${no}.</div>
-        <div class="move-cell"><span class="move-col"><span class="move-disc p1"></span>${w}</span><span class="move-who">Yellow</span></div>
-        <div class="move-cell">${b!==undefined?`<span class="move-col"><span class="move-disc p2"></span>${b}</span><span class="move-who">Red</span>`:'<span style="color:var(--muted)">...</span>'}</div>
-        <div class="move-eval-val">—</div>
-      </div>`;
+  function renderMoveList() {
+    if (!moves.length) {
+      movesListEl.innerHTML = '<div style="font-size:12px;color:var(--muted);padding:4px 8px">No moves yet</div>';
+      return;
     }
-    movesListEl.innerHTML=html;
-    movesListEl.scrollTop=movesListEl.scrollHeight;
+    let html = '';
+    for (let i = 0; i < moves.length; i += 2) {
+      const no = Math.floor(i / 2) + 1;
+      const w = moves[i];
+      const b = moves[i + 1];
+      const isCurrent = (b === undefined) ? i === moves.length - 1 : i + 1 === moves.length - 1;
+      html += `
+        <div class="move-row${isCurrent ? ' current' : ''}">
+          <div class="move-no">${no}.</div>
+          <div class="move-cell"><span class="move-col"><span class="move-disc p1"></span>${w}</span><span class="move-who">Yellow</span></div>
+          <div class="move-cell">${b !== undefined ? `<span class="move-col"><span class="move-disc p2"></span>${b}</span><span class="move-who">Red</span>` : '<span style="color:var(--muted)">...</span>'}</div>
+          <div class="move-eval-val">—</div>
+        </div>`;
+    }
+    movesListEl.innerHTML = html;
+    movesListEl.scrollTop = movesListEl.scrollHeight;
   }
 
-  function setStatus(state,text){
-    statusDotEl.className='status-dot '+state;
-    statusTextEl.textContent=text;
+  function setStatus(state, text) {
+    statusDotEl.className = 'status-dot ' + state;
+    statusTextEl.textContent = text;
   }
 
-  function updateEngineUI(bestMove,score,depth,maxDepth,pv,done){
-    const now=Date.now();
-    if(!done&&now-lastUIUpdate<UI_THROTTLE_MS)return;
-    lastUIUpdate=now;
-    const evalStr=(score>=0?'+':'')+score.toFixed(2);
-    evalBadgeEl.textContent=evalStr;
-    evalBadgeEl.className='eval-badge '+(Math.abs(score)<0.1?'zero':score>0?'pos':'neg');
-    pvLineEl.textContent=pv||'—';
-    barFillEl.style.width=Math.min(100,(depth/maxDepth)*100)+'%';
-    depthValEl.textContent=`d${depth} / ${maxDepth}`;
-    if(bestMove>=0&&bestMove!==currentBestMove){currentBestMove=bestMove;renderDropButtons();}
-    if(done){
-      searching=false;
-      setStatus('done',`Done — best: col ${bestMove>=0?bestMove:'?'}`);
-      liveBadgeEl.className='live-badge';
-      liveBadgeEl.textContent='Live engine';
-      analyzeBtn.disabled=false;
+  function updateEngineUI(bestMove, score, depth, maxDepth, pv, done) {
+    const now = Date.now();
+    if (!done && now - lastUIUpdate < UI_THROTTLE_MS) return;
+    lastUIUpdate = now;
+
+    evalBadgeEl.textContent = (score >= 0 ? '+' : '') + score.toFixed(2);
+    evalBadgeEl.className = 'eval-badge ' + (Math.abs(score) < 0.1 ? 'zero' : score > 0 ? 'pos' : 'neg');
+    pvLineEl.textContent = pv || '—';
+    barFillEl.style.width = Math.min(100, (depth / maxDepth) * 100) + '%';
+    depthValEl.textContent = `d${depth} / ${maxDepth}`;
+
+    if (bestMove >= 0 && bestMove !== currentBestMove) {
+      currentBestMove = bestMove;
+      renderDropButtons();
+    }
+
+    if (done) {
+      searching = false;
+      setStatus('done', `Done — best: col ${bestMove >= 0 ? bestMove : '?'}`);
+      liveBadgeEl.className = 'live-badge';
+      liveBadgeEl.textContent = 'Live engine';
+      analyzeBtn.disabled = false;
     } else {
-      setStatus('thinking',`Searching depth ${depth}...`);
+      setStatus('thinking', `Searching depth ${depth}...`);
     }
   }
 
-  const WORKER_CODE=`
-    let mod=null,modReady=false,generation=0;
-    self.onmessage=function(e){
-      const{type,payload}=e.data;
-      if(type==='INIT'){
-        try{
+  const WORKER_CODE = `
+    let mod = null;
+    let modReady = false;
+    let generation = 0;
+
+    self.onmessage = function(e) {
+      const { type, payload } = e.data;
+
+      if (type === 'INIT') {
+        try {
+          var Module = {};
+          Module.onRuntimeInitialized = function() {
+            mod = Module;
+            modReady = true;
+            self.postMessage({ type: 'READY' });
+          };
+
           importScripts(payload.engineUrl);
-          const checkReady=setInterval(()=>{
-            if(typeof Module!=='undefined'&&Module.ccall){
-              mod=Module;modReady=true;clearInterval(checkReady);
-              self.postMessage({type:'READY'});
-            }
-          },50);
-          setTimeout(()=>{clearInterval(checkReady);if(!modReady)self.postMessage({type:'ERROR',payload:'Engine load timeout'});},10000);
-        }catch(err){self.postMessage({type:'ERROR',payload:err.message});}
+
+          if (typeof Module !== 'undefined' && Module.onRuntimeInitialized && typeof Module.ccall === 'function') {
+            setTimeout(function() {
+              if (!modReady) {
+                mod = Module;
+                modReady = true;
+                self.postMessage({ type: 'READY' });
+              }
+            }, 0);
+          }
+        } catch (err) {
+          self.postMessage({ type: 'ERROR', payload: err.message });
+        }
         return;
       }
-      if(type==='SEARCH'){
-        if(!modReady){self.postMessage({type:'ERROR',payload:'Engine not ready'});return;}
-        generation=payload.generation;
-        const{movesStr,maxDepth,gen}=payload;
-        const myGen=generation;
-        try{
-          mod.ccall('set_position_from_moves',null,['string'],[movesStr]);
-          for(let d=1;d<=maxDepth;d++){
-            if(myGen!==generation)break;
-            const best=mod.ccall('search_bestmove','number',['number'],[d]);
-            const score=mod.ccall('search_score','number',[],[])/100.0;
-            const pv=mod.ccall('get_pv_line','string',[],[]);
-            self.postMessage({type:'PROGRESS',payload:{best,score,depth:d,maxDepth,pv,done:false,generation:myGen}});
+
+      if (type === 'SEARCH') {
+        if (!modReady) {
+          self.postMessage({ type: 'ERROR', payload: 'Engine not ready' });
+          return;
+        }
+
+        generation = payload.generation;
+        const myGen = generation;
+
+        try {
+          mod.ccall('set_position_from_moves', null, ['string'], [payload.movesStr]);
+
+          for (let d = 1; d <= payload.maxDepth; d++) {
+            if (myGen !== generation) break;
+            const best = mod.ccall('search_bestmove', 'number', ['number'], [d]);
+            const score = mod.ccall('search_score', 'number', [], []) / 100.0;
+            const pv = mod.ccall('get_pv_line', 'string', [], []);
+            self.postMessage({
+              type: 'PROGRESS',
+              payload: { best, score, depth: d, maxDepth: payload.maxDepth, pv, done: false, generation: myGen }
+            });
           }
-          if(myGen===generation){
-            const best=mod.ccall('search_bestmove','number',['number'],[maxDepth]);
-            const score=mod.ccall('search_score','number',[],[])/100.0;
-            const pv=mod.ccall('get_pv_line','string',[],[]);
-            self.postMessage({type:'PROGRESS',payload:{best,score,depth:maxDepth,maxDepth,pv,done:true,generation:myGen}});
+
+          if (myGen === generation) {
+            const best = mod.ccall('search_bestmove', 'number', ['number'], [payload.maxDepth]);
+            const score = mod.ccall('search_score', 'number', [], []) / 100.0;
+            const pv = mod.ccall('get_pv_line', 'string', [], []);
+            self.postMessage({
+              type: 'PROGRESS',
+              payload: { best, score, depth: payload.maxDepth, maxDepth: payload.maxDepth, pv, done: true, generation: myGen }
+            });
           }
-        }catch(err){self.postMessage({type:'ERROR',payload:err.message});}
+        } catch (err) {
+          self.postMessage({ type: 'ERROR', payload: err.message });
+        }
         return;
       }
-      if(type==='CANCEL'){generation++;return;}
+
+      if (type === 'CANCEL') {
+        generation++;
+        return;
+      }
     };
   `;
 
-  let worker=null;
-
-  function createWorker(){
-    const blob=new Blob([WORKER_CODE],{type:'application/javascript'});
-    worker=new Worker(URL.createObjectURL(blob));
-    worker.onmessage=onWorkerMessage;
-    worker.onerror=(e)=>{setStatus('error','Worker error: '+e.message);searching=false;analyzeBtn.disabled=false;};
+  function createWorker() {
+    const blob = new Blob([WORKER_CODE], { type: 'application/javascript' });
+    worker = new Worker(URL.createObjectURL(blob));
+    worker.onmessage = onWorkerMessage;
+    worker.onerror = (e) => {
+      setStatus('error', 'Worker error: ' + e.message);
+      searching = false;
+      analyzeBtn.disabled = false;
+    };
   }
 
-  function onWorkerMessage(e){
-    const{type,payload}=e.data;
-    if(type==='READY'){
-      engineReady=true;setStatus('ready','Engine ready ✓');analyzeBtn.disabled=false;
-      if(moves.length>0&&!gameOver)startSearch();
+  function onWorkerMessage(e) {
+    const { type, payload } = e.data;
+    if (type === 'READY') {
+      engineReady = true;
+      setStatus('ready', 'Engine ready ✓');
+      analyzeBtn.disabled = false;
+      if (moves.length > 0 && !gameOver) startSearch();
       return;
     }
-    if(type==='ERROR'){setStatus('error',payload);searching=false;analyzeBtn.disabled=false;return;}
-    if(type==='PROGRESS'){
-      if(payload.generation!==searchGeneration)return;
-      updateEngineUI(payload.best,payload.score,payload.depth,payload.maxDepth,payload.pv,payload.done);
+    if (type === 'ERROR') {
+      setStatus('error', payload);
+      searching = false;
+      analyzeBtn.disabled = false;
       return;
+    }
+    if (type === 'PROGRESS') {
+      if (payload.generation !== searchGeneration) return;
+      updateEngineUI(payload.best, payload.score, payload.depth, payload.maxDepth, payload.pv, payload.done);
     }
   }
 
-  function initEngine(){
-    setStatus('','Loading engine...');
-    statusDotEl.className='status-dot';
-    analyzeBtn.disabled=true;
+  function initEngine() {
+    setStatus('', 'Loading engine...');
+    statusDotEl.className = 'status-dot';
+    analyzeBtn.disabled = true;
     createWorker();
-    const engineUrl=new URL('engine.js',window.location.href).href;
-    worker.postMessage({type:'INIT',payload:{engineUrl}});
+    const engineUrl = new URL('engine.js', window.location.href).href;
+    worker.postMessage({ type: 'INIT', payload: { engineUrl } });
   }
 
-  function startSearch(){
-    if(!engineReady||gameOver)return;
-    if(searching){searchGeneration++;worker.postMessage({type:'CANCEL'});}
-    searching=true;analyzeBtn.disabled=true;
-    liveBadgeEl.className='live-badge searching';
-    liveBadgeEl.textContent='Analyzing...';
-    barFillEl.style.width='0%';
-    setStatus('thinking','Starting search...');
-    worker.postMessage({type:'SEARCH',payload:{movesStr:moves.join(' '),maxDepth:MAX_DEPTH,generation:searchGeneration}});
+  function startSearch() {
+    if (!engineReady || gameOver) return;
+    if (searching) {
+      searchGeneration++;
+      worker.postMessage({ type: 'CANCEL' });
+    }
+    searching = true;
+    analyzeBtn.disabled = true;
+    liveBadgeEl.className = 'live-badge';
+    liveBadgeEl.textContent = 'Analyzing...';
+    setStatus('thinking', 'Starting search...');
+    barFillEl.style.width = '0%';
+
+    worker.postMessage({
+      type: 'SEARCH',
+      payload: {
+        movesStr: moves.join(' '),
+        maxDepth: MAX_DEPTH,
+        generation: ++searchGeneration
+      }
+    });
   }
 
-  function onCellClick(col){
-    if(gameOver||!canPlay(col))return;
-    const row=colHeight(col);
-    board[row][col]=turn;moves.push(col);
-    const won=checkWin(turn);
-    if(won){
-      winCells=won;gameOver=true;renderBoard();renderMoveList();
-      searchGeneration++;if(worker)worker.postMessage({type:'CANCEL'});searching=false;
-      barFillEl.style.width='100%';
-      setStatus('done',turn===1?'Yellow wins!':'Red wins!');
-      liveBadgeEl.className='live-badge';liveBadgeEl.textContent=turn===1?'🟡 Yellow wins':'🔴 Red wins';
-      evalBadgeEl.textContent=turn===1?'+∞':'-∞';evalBadgeEl.className='eval-badge '+(turn===1?'pos':'neg');
-      pvLineEl.textContent='Game over';depthValEl.textContent='—';
-      document.getElementById('overlayEmoji').textContent=turn===1?'🟡':'🔴';
-      document.getElementById('overlayTitle').textContent=(turn===1?'Yellow':'Red')+' wins!';
-      document.getElementById('overlaySub').textContent='Move '+moves.length+' • Column '+col;
+  function onCellClick(col) {
+    if (gameOver || !canPlay(col)) return;
+
+    const row = colHeight(col);
+    board[row][col] = turn;
+    moves.push(col);
+
+    const won = checkWin(turn);
+    if (won) {
+      winCells = won;
+      gameOver = true;
+      renderBoard();
+      renderMoveList();
+      searchGeneration++;
+      if (worker) worker.postMessage({ type: 'CANCEL' });
+      searching = false;
+      barFillEl.style.width = '100%';
+      setStatus('done', turn === 1 ? 'Yellow wins!' : 'Red wins!');
+      liveBadgeEl.textContent = turn === 1 ? '🟡 Yellow wins' : '🔴 Red wins';
+      evalBadgeEl.textContent = turn === 1 ? '+∞' : '-∞';
+      evalBadgeEl.className = 'eval-badge ' + (turn === 1 ? 'pos' : 'neg');
+      pvLineEl.textContent = 'Game over';
+      depthValEl.textContent = '—';
+      document.getElementById('overlayEmoji').textContent = turn === 1 ? '🟡' : '🔴';
+      document.getElementById('overlayTitle').textContent = (turn === 1 ? 'Yellow' : 'Red') + ' wins!';
+      document.getElementById('overlaySub').textContent = 'Move ' + moves.length + ' • Column ' + col;
       overlayEl.classList.add('show');
-      turn=turn===1?2:1;return;
+      turn = turn === 1 ? 2 : 1;
+      return;
     }
-    if(isBoardFull()){
-      gameOver=true;renderBoard();renderMoveList();
-      searchGeneration++;if(worker)worker.postMessage({type:'CANCEL'});
-      setStatus('done','Draw! Board is full');
-      liveBadgeEl.textContent='🤝 Draw';
-      document.getElementById('overlayEmoji').textContent='🤝';
-      document.getElementById('overlayTitle').textContent='Draw!';
-      document.getElementById('overlaySub').textContent='Board is full';
+
+    if (isBoardFull()) {
+      gameOver = true;
+      renderBoard();
+      renderMoveList();
+      searchGeneration++;
+      if (worker) worker.postMessage({ type: 'CANCEL' });
+      setStatus('done', 'Draw! Board is full');
+      liveBadgeEl.textContent = '🤝 Draw';
+      document.getElementById('overlayEmoji').textContent = '🤝';
+      document.getElementById('overlayTitle').textContent = 'Draw!';
+      document.getElementById('overlaySub').textContent = 'Board is full';
       overlayEl.classList.add('show');
-      turn=turn===1?2:1;return;
+      turn = turn === 1 ? 2 : 1;
+      return;
     }
-    turn=turn===1?2:1;currentBestMove=-1;
-    renderBoard();renderMoveList();
+
+    turn = turn === 1 ? 2 : 1;
+    currentBestMove = -1;
+    renderBoard();
+    renderMoveList();
     startSearch();
   }
 
-  function undoMove(){
-    if(!moves.length)return;
-    if(gameOver){gameOver=false;winCells=[];overlayEl.classList.remove('show');}
-    const lastCol=moves.pop();
-    for(let r=ROWS-1;r>=0;r--){if(board[r][lastCol]!==0){board[r][lastCol]=0;break;}}
-    turn=turn===1?2:1;currentBestMove=-1;
-    renderBoard();renderMoveList();
-    if(moves.length>0)startSearch();
-    else{setStatus('ready','Engine ready ✓');evalBadgeEl.textContent='0.00';evalBadgeEl.className='eval-badge zero';pvLineEl.textContent='—';barFillEl.style.width='0%';depthValEl.textContent='—';}
+  function undoMove() {
+    if (!moves.length) return;
+    if (gameOver) {
+      gameOver = false;
+      winCells = [];
+      overlayEl.classList.remove('show');
+    }
+    const lastCol = moves.pop();
+    for (let r = ROWS - 1; r >= 0; r--) {
+      if (board[r][lastCol] !== 0) {
+        board[r][lastCol] = 0;
+        break;
+      }
+    }
+    turn = turn === 1 ? 2 : 1;
+    currentBestMove = -1;
+    renderBoard();
+    renderMoveList();
+    if (moves.length > 0) startSearch();
+    else {
+      setStatus('ready', 'Engine ready ✓');
+      evalBadgeEl.textContent = '0.00';
+      evalBadgeEl.className = 'eval-badge zero';
+      pvLineEl.textContent = '—';
+      barFillEl.style.width = '0%';
+      depthValEl.textContent = '—';
+    }
   }
 
-  function newGame(){
-    board=mk2d();moves=[];turn=1;gameOver=false;winCells=[];currentBestMove=-1;
-    overlayEl.classList.remove('show');searchGeneration++;
-    if(worker)worker.postMessage({type:'CANCEL'});searching=false;
-    renderBoard();renderMoveList();
-    evalBadgeEl.textContent='0.00';evalBadgeEl.className='eval-badge zero';
-    pvLineEl.textContent='—';barFillEl.style.width='0%';depthValEl.textContent='—';
-    if(engineReady)setStatus('ready','Engine ready ✓');
-    analyzeBtn.disabled=!engineReady;
+  function newGame() {
+    board = mk2d();
+    moves = [];
+    turn = 1;
+    gameOver = false;
+    winCells = [];
+    currentBestMove = -1;
+    overlayEl.classList.remove('show');
+    searchGeneration++;
+    if (worker) worker.postMessage({ type: 'CANCEL' });
+    searching = false;
+    renderBoard();
+    renderMoveList();
+    evalBadgeEl.textContent = '0.00';
+    evalBadgeEl.className = 'eval-badge zero';
+    pvLineEl.textContent = '—';
+    barFillEl.style.width = '0%';
+    depthValEl.textContent = '—';
+    if (engineReady) setStatus('ready', 'Engine ready ✓');
+    analyzeBtn.disabled = !engineReady;
   }
 
-  document.getElementById('newGameBtn').addEventListener('click',newGame);
-  document.getElementById('overlayNewGame').addEventListener('click',()=>{overlayEl.classList.remove('show');newGame();});
-  document.getElementById('undoBtn').addEventListener('click',undoMove);
-  analyzeBtn.addEventListener('click',startSearch);
-  document.getElementById('prevBtn').addEventListener('click',undoMove);
+  document.getElementById('newGameBtn').addEventListener('click', newGame);
+  document.getElementById('overlayNewGame').addEventListener('click', () => {
+    overlayEl.classList.remove('show');
+    newGame();
+  });
+  document.getElementById('undoBtn').addEventListener('click', undoMove);
+  document.getElementById('prevBtn').addEventListener('click', undoMove);
+  analyzeBtn.addEventListener('click', startSearch);
 
-  renderBoard();renderMoveList();
+  renderBoard();
+  renderMoveList();
   initEngine();
-  setTimeout(()=>{if(!engineReady)setStatus('error','engine.js not found — place it in same folder');},4000);
+
+  setTimeout(() => {
+    if (!engineReady) setStatus('error', 'engine.js not found — place it in same folder');
+  }, 4000);
   </script>
 </body>
 </html>
